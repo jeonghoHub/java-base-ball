@@ -8,10 +8,12 @@ package study;
 * 모두 맞추면 게임 종료
 *  */
 
-import java.util.LinkedList;
-
 public class NumbersBaseballGame {
     public static void main(String[] args) {
+        boolean power = false;
+
+        power = !power;
+
 
     }
 }
