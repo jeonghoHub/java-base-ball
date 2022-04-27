@@ -22,10 +22,9 @@ public class StringCalculatorTest {
     @ParameterizedTest
     @CsvSource(value = "22 + 3 * 4 / 2")
     void 주어진_문자열에서_연산자와_피연산자_추출(String value) {
-        String[] operand = value.replaceAll("[\\s]","").replaceAll("^\\d", " ").split(" ");
+        String[] operand = value.replaceAll("[\\s]","").replaceAll("[^\\d]", " ").split(" ");
         String[] operator = value.replaceAll("[\\s\\d]", "").split("");
-
-
+        
 //        System.out.println(operand);
         System.out.println(Arrays.toString(operand));
         System.out.println(Arrays.toString(operator));
