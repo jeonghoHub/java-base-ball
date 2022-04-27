@@ -1,50 +1,30 @@
 package study;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+/*2 + 3 * 4 / 2 = 10/
+ */
 public class StringCalculator {
-    public double add(String value) {
-        String[] operand = value.replaceAll("[\\s]","")
-                                .replaceAll("[^\\d]", " ")
-                                .split(" ");
-        String[] operator = value.replaceAll("[\\s\\d]", "")
-                                 .split("");
+    private int add() {
+        return 0;
+    }
 
-        int sum = 0;
+    public String[] operatorExtractor(String value) {
+            String test[] =  value.replaceAll("\\s", "")
+                    .replaceAll("\\d", "")
+                    .split("");
 
-        for (int i = 0; i < operator.length; i++) {
-            if(i == 0) {
-                sum = operandFactory(Integer.parseInt(operand[i]), Integer.parseInt(operand[i + 1]), operator[i]);
-            } else {
-                sum = operandFactory(sum, Integer.parseInt(operand[i + 1]), operator[i]);
+            Pattern pattern = Pattern.compile("^\\d+( ?[+\\-*/] ?\\d+)*$");
+            String str = value;
+
+            Matcher matcher = pattern.matcher(str);
+
+            if(!matcher.matches()) {
+                throw new IllegalArgumentException("잘못된 값 입니다.");
             }
-        }
 
-        return sum;
-    }
-
-    private int operandFactory(int operand, int value, String operator) {
-        if (operator.equals("+")) {
-            return plus(operand, value);
-        } else if(operator.equals("-")) {
-            return miuns(operand, value);
-        } else if(operator.equals("*")) {
-            return multiply(operand, value);
-        } else {
-            return division(operand, value);
-        }
-    }
-
-    int plus(int operand, int value) {
-        return operand + value;
-    }
-    int miuns(int operand, int value) {
-        return operand - value;
-    }
-    int multiply(int operand, int value) {
-        return operand * value;
-    }
-    int division(int operand, int value) {
-        return operand / value;
+        return test;
     }
 }

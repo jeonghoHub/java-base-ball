@@ -10,44 +10,73 @@ import java.util.Arrays;
 
 import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringCalculatorTest {
-    StringCalculator stringCalculator;
 
+    StringCalculator sut;
     @BeforeEach
     void setUp() {
-        stringCalculator = new StringCalculator();
-    }
-//    + * ?
-    @ParameterizedTest
-    @CsvSource(value = "22 + 3 * 4 / 2")
-    void 주어진_문자열에서_연산자_추출(String value) {
-        String[] operand = value.replaceAll("\\s","").replaceAll("\\D", " ").split(" ");
-        String[] operator = value.replaceAll("\\d\\s", "").split("");
-        System.out.println(Arrays.toString(operator));
-//        assertAll(
-//                () -> assertThat(new String[] {"22","3","4","2"}).isEqualTo(operand),
-//                () -> assertThat(new String[] {"+","*","/"}).isEqualTo(operator)
-//        );
-
+        sut = new StringCalculator();
     }
 
+//    2 + 3 * 4 / 2 - 2 = 8
+    @Test
+    void 연산자_추출을_한다() {
+        //1.피연산자와 연산자가 섞인 문자열 중 피연산자만을 추출하여 반환한다.
+        //given
+        String value = "2 + 3 * 4 / 2 - 2";
 
-    @ParameterizedTest
-    @CsvSource(value = {"2 + 3 * 4 / 2:10", "30+2 / 2 + 5 - 10 *2:22"}, delimiter = ':')
-    void add(String value, int separator) {
-        double result = stringCalculator.add(value);
-        assertThat(result).isEqualTo(separator);
+        //when
+        String[] operands = sut.operatorExtractor(value);
+
+        //then
+        assertThat(operands).isEqualTo(new String[] {"+","*","/","-"});
+    }
+
+    @Test
+    void 연산자_추출을_한다2() {
+        //1.피연산자와 연산자가 섞인 문자열 중 피연산자만을 추출하여 반환한다.
+        //given
+        String value = "22+ 3 * 4 / 2-2 + 30";
+
+        //when
+        String[] operands = sut.operatorExtractor(value);
+
+        //then
+        assertThat(operands).isEqualTo(new String[] {"+","*","/","-","+"});
+    }
+
+    @Test
+    void 연산자_추출을_한다3() {
+        //1.피연산자와 연산자가 섞인 문자열 중 피연산자만을 추출하여 반환한다.
+        //given
+        String value = "20*20-2+3+3+4-5/2";
+
+        //when
+        String[] operands = sut.operatorExtractor(value);
+
+        //then
+        assertThat(operands).isEqualTo(new String[] {"*","-","+","+","+","-","/"});
+    }
+
+    @Test
+    void 연산자_추출을_한다4() {
+        //1.피연산자와 연산자가 섞인 문자열 중 피연산자만을 추출하여 반환한다.
+        //given
+        String value = "2+*3**20--2";
+
+        //then
+        assertThatThrownBy(
+                () -> sut.operatorExtractor(value)
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 
 
 
 
-    @AfterEach
-    void reSet() {
-        stringCalculator = null;
-    }
+
 
 }
