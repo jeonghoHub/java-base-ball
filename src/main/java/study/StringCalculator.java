@@ -1,6 +1,5 @@
 package study;
 
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,19 +11,27 @@ public class StringCalculator {
     }
 
     public String[] operatorExtractor(String value) {
-            String test[] =  value.replaceAll("\\s", "")
-                    .replaceAll("\\d", "")
-                    .split("");
 
-            Pattern pattern = Pattern.compile("^\\d+( ?[+\\-*/] ?\\d+)*$");
-            String str = value;
+        valueValidation(value);
 
-            Matcher matcher = pattern.matcher(str);
+        String operator[] = value.replaceAll("\\s", "")
+                .replaceAll("\\d", "")
+                .split("");
 
-            if(!matcher.matches()) {
-                throw new IllegalArgumentException("잘못된 값 입니다.");
-            }
+        return operator;
+    }
+    public String[] opertandExtractor(String value) {
 
-        return test;
+    }
+
+    private void valueValidation(String value) {
+        Pattern pattern = Pattern.compile("^\\d+( ?[+\\-*/] ?\\d+)*$");
+        String str = value;
+
+        Matcher matcher = pattern.matcher(str);
+
+        if(!matcher.matches()) {
+            throw new IllegalArgumentException("잘못된 값 입니다.");
+        }
     }
 }

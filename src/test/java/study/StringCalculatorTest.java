@@ -30,10 +30,10 @@ public class StringCalculatorTest {
         String value = "2 + 3 * 4 / 2 - 2";
 
         //when
-        String[] operands = sut.operatorExtractor(value);
+        String[] operator = sut.operatorExtractor(value);
 
         //then
-        assertThat(operands).isEqualTo(new String[] {"+","*","/","-"});
+        assertThat(operator).isEqualTo(new String[] {"+","*","/","-"});
     }
 
     @Test
@@ -43,10 +43,10 @@ public class StringCalculatorTest {
         String value = "22+ 3 * 4 / 2-2 + 30";
 
         //when
-        String[] operands = sut.operatorExtractor(value);
+        String[] operator = sut.operatorExtractor(value);
 
         //then
-        assertThat(operands).isEqualTo(new String[] {"+","*","/","-","+"});
+        assertThat(operator).isEqualTo(new String[] {"+","*","/","-","+"});
     }
 
     @Test
@@ -56,15 +56,29 @@ public class StringCalculatorTest {
         String value = "20*20-2+3+3+4-5/2";
 
         //when
-        String[] operands = sut.operatorExtractor(value);
+        String[] operator = sut.operatorExtractor(value);
 
         //then
-        assertThat(operands).isEqualTo(new String[] {"*","-","+","+","+","-","/"});
+        assertThat(operator).isEqualTo(new String[] {"*","-","+","+","+","-","/"});
     }
 
     @Test
-    void 연산자_추출을_한다4() {
-        //1.피연산자와 연산자가 섞인 문자열 중 피연산자만을 추출하여 반환한다.
+    void 피연산자_추출을_한다() {
+        //given
+        String value = "2 + 3 * 4 / 2 - 2";
+
+        //when
+        String[] operands = sut.opertandExtractor(value);
+
+        //then
+        assertThat(operands).isEqualTo(new String[] {"2","3","4","2","2"});
+    }
+
+
+
+    @Test
+    void 인자값이_정규식_위반시_예외발생() {
+        //1.정규식 위반 시 예외 발생
         //given
         String value = "2+*3**20--2";
 
@@ -73,8 +87,6 @@ public class StringCalculatorTest {
                 () -> sut.operatorExtractor(value)
         ).isInstanceOf(IllegalArgumentException.class);
     }
-
-
 
 
 
