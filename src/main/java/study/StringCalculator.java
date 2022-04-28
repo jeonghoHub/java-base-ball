@@ -1,34 +1,43 @@
 package study;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /*2 + 3 * 4 / 2 = 10/
  */
-public class StringCalculator {
-    private int add() {
-        return 0;
+public final class StringCalculator {
+
+    private static final Pattern PATTERN = Pattern.compile("^\\d+( ?[+\\-*/] ?\\d+)*$");
+
+    public double calculate(String expr) {
+        validation(expr);
+        String[] operatorList = operatorExtractor(expr);
+        String[] operandList = operandExtractor(expr);
+
+        System.out.println(Arrays.toString(operatorList));
+        System.out.println(Arrays.toString(operandList));
+
+        return 8;
     }
 
-    public String[] operatorExtractor(String value) {
-
-        valueValidation(value);
-
-        String operator[] = value.replaceAll("\\s", "")
+    private String[] operatorExtractor(String expr) {
+        return expr.replaceAll("\\s", "")
                 .replaceAll("\\d", "")
                 .split("");
-
-        return operator;
     }
-    public String[] opertandExtractor(String value) {
-
+    private String[] operandExtractor(String expr) {
+        return expr.replaceAll("\\s","")
+                .replaceAll("\\D", "")
+                .split("");
     }
 
-    private void valueValidation(String value) {
-        Pattern pattern = Pattern.compile("^\\d+( ?[+\\-*/] ?\\d+)*$");
-        String str = value;
+    private void validation(String expr) {
+        if(expr == null) {
+            throw new IllegalArgumentException("잘못된 값 입니다.");
+        }
 
-        Matcher matcher = pattern.matcher(str);
+        Matcher matcher = PATTERN.matcher(expr);
 
         if(!matcher.matches()) {
             throw new IllegalArgumentException("잘못된 값 입니다.");
