@@ -15,9 +15,6 @@ public final class StringCalculator {
         String[] operatorList = operatorExtractor(expr);
         String[] operandList = operandExtractor(expr);
 
-        System.out.println(Arrays.toString(operatorList));
-        System.out.println(Arrays.toString(operandList));
-
         return 8;
     }
 
