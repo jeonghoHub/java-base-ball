@@ -1,58 +1,80 @@
 package study;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
 
-import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringCalculatorTest {
-
-    StringCalculator sut;
-
+    StringCalculator stringCalculator;
     @BeforeEach
     void setUp() {
-        sut = new StringCalculator();
+        stringCalculator = new StringCalculator();
+    }
+//    2 + 3 * 4 / 2
+    @ParameterizedTest
+    @CsvSource(value = {
+            "2 + 5 * 3 - 1:20",
+            "2 + 5 * 3 - 1/2:10",
+    },
+            delimiter = ':')
+    void 연산테스트(String expression, int target) {
+
+        double result = stringCalculator.calculation(expression);
+
+        assertThat(result).isEqualTo(target);
+    }
+
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "2 + 3 * 4 / 2:3",
+            "2+3*4/2-3-6-8:6",
+            "2 * 3 * 4 - 2/3/6+7*3:7"
+    }, delimiter = ':')
+    void 연산자분리_테스트(String value, int target) {
+//        1.주어진 값에서 연산자를 분리한다. ex) +,-,*,/
+        String[] operator = stringCalculator.operatorExtraction(value);
+
+        assertThat(operator.length).isEqualTo(target);
     }
 
     @ParameterizedTest
-    @CsvSource(value =
-                        {"false: 2 + 2 * 5 / 2 - 2:8",
-                         "false: 5 + 5 + 5 + 5 * 2:40",
-//                         "false: 10/ 2*5 + 2 - 2:10",
-//                         "false: 30- 10 / 2:15",
-                         "true: 2 + 2 * 5 / 2-- 2:8",
-                         "true: :2",
-                         "true: null:9",
-                         "true: 12+12++:3",
-                         "true: +12+:2",
-                         "true: +12+:2",
-                         "true: -12-:2",
-                         "true: /123-^-12+:2",
-                         "true: mmm123--+^^:2",
-                         "true: ?????:2",
-                         "true: ?,1223,..123..32:2",
-                         "true: 후?212++5#$@ㅋ:2",
-                         "true: mㅇ+-2@!#?므둫212null:2",
-                        },
-            delimiter = ':')
-    void 연산테스트(boolean abnormal, String expr, double expected) {
-        if(abnormal) {
-            assertThatThrownBy(
-                    () -> sut.calculate(expr)
-            ).isInstanceOf(IllegalArgumentException.class);
-        } else {
-            assertThat(sut.calculate(expr)).isEqualTo(expected);
-        }
+    @CsvSource(value = {
+            "2 + 3 * 4 / 2:4",
+            "2+3*4/2-3-6-8:7",
+            "2 * 3 * 4 - 2/3/6+7*3:8",
+            "5*5/3+2/4+3:6",
+//            "2 * 3 * 4 - 2/3/6+7*3:8",
+//            "2 * 3 * 4 - 2/3/6+7*3:8"
+    }, delimiter = ':')
+    void 피연산자분리_테스트(String value, int target) {
+//        1.주어진 값에서 피연산자를 분리한다. ex) 2,3,5
+        String[] operator = stringCalculator.operandExtraction(value);
+
+        assertThat(operator.length).isEqualTo(target);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "2 + 3 * 4 // 2",
+            "+2+3/",
+            "2+3/3%3",
+            "2+3+",
+            "+++",
+            "null"
+    })
+    void 표현식검증_성공케이스(String value) {
+//        1.주어진 값이 옳지못한 값이라면 예외발생 성공
+        assertThatThrownBy(
+                () -> stringCalculator.vaildation(value)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
 
 }

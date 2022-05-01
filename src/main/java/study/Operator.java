@@ -1,37 +1,29 @@
 package study;
 
-import java.util.Arrays;
-import java.util.function.BiFunction;
 import java.util.function.DoubleBinaryOperator;
-import java.util.function.ToDoubleBiFunction;
+import java.util.stream.Stream;
 
-public enum Operator {
-    PLUS("+", (left, right) -> left + right ),
+enum Operator {
+    PLUS("+", (left, right) -> left + right),
     MINUS("-", (left, right) -> left - right),
-    MUTIPLY("*", (left, right) -> left * right),
+    MULTIPLY("*", (left, right) -> left * right ),
     DIVISION("/", (left, right) -> left / right);
 
-    private final String value;
-    private final ToDoubleBiFunction<Double, Double> biFunction;
-    Operator(String value, ToDoubleBiFunction<Double, Double> biFunction) {
+    String operator;
+    DoubleBinaryOperator binaryOperator;
 
-        this.value = value;
-        this.biFunction = biFunction;
+    Operator(String operator, DoubleBinaryOperator binaryOperator) {
+        this.operator = operator;
+        this.binaryOperator = binaryOperator;
     }
-
-    public static Operator from(String keyword) {
-        return Arrays.stream(Operator.values())
-                .filter(operator -> operator.value.equals(keyword))
+    static Operator from(String value) {
+//        System.out.println(operator);
+        return Stream.of(Operator.values())
+                .filter(operator1 -> operator1.operator.equals(value))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 값 입니다."));
+                .orElseThrow(IllegalArgumentException::new);
     }
-
-//    public double apply(double left, double right) {
-//        return biFunction.applyAsDouble(left, right);
-//    }
-
-
-    public double apply(double left, double right) {
-        return this.biFunction.applyAsDouble(left, right);
+    double apply(double left, double right) {
+        return binaryOperator.applyAsDouble(left, right);
     }
 }

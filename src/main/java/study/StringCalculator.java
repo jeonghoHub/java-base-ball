@@ -6,51 +6,39 @@ import java.util.regex.Pattern;
 
 /*2 + 3 * 4 / 2 = 10/
  */
-public final class StringCalculator {
+public class StringCalculator {
 
-    private static final Pattern PATTERN = Pattern.compile("^\\d+( ?[+\\-*/] ?\\d+)*$");
+    public double calculation(String expression) {
+        String[] operand = operandExtraction(expression);
+        String[] operator = operatorExtraction(expression);
 
-    public double calculate(String expression) {
-//      2 + 2 * 5 / 2 - 2
-        validation(expression);
-        //연산자
-        String[] operatorList = operatorExtractor(expression);
-        //피연산자
-        String[] operandList = operandExtractor(expression);
+        double result = Double.parseDouble(operand[0]);
 
-        double result = Double.parseDouble(operandList[0]);
+        for(int i = 0; i < operator.length; i++) {
+            double target = Double.parseDouble(operand[i + 1]);
 
-        for(int i = 1; i < operandList.length; i++) {
-            String operator = operatorList[i-1];
-            Operator from = Operator.from(operator);
-
-            double targetValue = Double.parseDouble(operandList[i]);
-
-            result = from.apply(result, targetValue);
+            Operator from = Operator.from(operator[i]);
+            result = from.apply(result, target);
         }
 
         return result;
     }
 
-    private String[] operatorExtractor(String expr) {
-        return expr.replaceAll("\\s", "")
+    public String[] operatorExtraction(String expression) {
+        return expression.replaceAll("\\s", "")
                 .replaceAll("\\d", "")
                 .split("");
     }
-    private String[] operandExtractor(String expr) {
-        return expr.replaceAll("\\s","")
+
+    public String[] operandExtraction(String expression) {
+        return expression.replaceAll("\\s", "")
                 .replaceAll("\\D", "")
                 .split("");
     }
 
-    private void validation(String expr) {
-        if(expr == null) {
-            throw new IllegalArgumentException("잘못된 값 입니다.");
-        }
-
-        Matcher matcher = PATTERN.matcher(expr);
-
-        if(!matcher.matches()) {
+    public void vaildation(String expression) {
+        Pattern pattern = Pattern.compile("^\\d+( ?[+\\-*/] ?\\d+)* ?$");
+        if(!pattern.matcher(expression).find()) {
             throw new IllegalArgumentException("잘못된 값 입니다.");
         }
     }
