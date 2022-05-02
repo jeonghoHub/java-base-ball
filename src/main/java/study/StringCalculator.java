@@ -21,7 +21,9 @@ public class StringCalculator {
         return operator;
     }
     public String[] opertandExtractor(String value) {
+        valueValidation(value);
 
+        String opetand[] = value.re
     }
 
     private void valueValidation(String value) {
