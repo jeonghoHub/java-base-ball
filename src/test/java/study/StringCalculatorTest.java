@@ -1,94 +1,54 @@
 package study;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
 
-import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringCalculatorTest {
 
-    StringCalculator sut;
+    StringCalculator stringCalculator;
     @BeforeEach
     void setUp() {
-        sut = new StringCalculator();
+        stringCalculator = new StringCalculator();
+    }
+    @ParameterizedTest
+    @CsvSource(value = {
+            "2 + 3 * 4 / 2:10",
+            "2 + 3 * 4 / 2 - 5:5",
+            "5 * 5 - 5 + 2:18"
+    },delimiter = ':')
+    void 연산테스트(String expression, int target) {
+        //표현식이 들어오면 연산함.
+        //given
+        int result = stringCalculator.calculation(expression);
+
+        //then
+        assertThat(result).isEqualTo(target);
     }
 
-//    2 + 3 * 4 / 2 - 2 = 8
-    @Test
-    void 연산자_추출을_한다() {
-        //1.피연산자와 연산자가 섞인 문자열 중 피연산자만을 추출하여 반환한다.
-        //given
-        String value = "2 + 3 * 4 / 2 - 2";
+    @ParameterizedTest
+    @CsvSource(value = {
+            "2 + 3 * 4 / 2:3",
+            "2 + 3 * 4 / 2 / 2/3/7+3:7",
+    }, delimiter = ':')
+    void 연산자추출(String expression, int target) {
+        //1.주어진 표현식에서 연산자 추출
 
         //when
-        String[] operator = sut.operatorExtractor(value);
+        String[] operator = expression.replaceAll("\\s","")
+                    .replaceAll("\\d","")
+                    .split("");
 
         //then
-        assertThat(operator).isEqualTo(new String[] {"+","*","/","-"});
+        assertThat(operator.length).isEqualTo(target);
     }
-
-    @Test
-    void 연산자_추출을_한다2() {
-        //1.피연산자와 연산자가 섞인 문자열 중 피연산자만을 추출하여 반환한다.
-        //given
-        String value = "22+ 3 * 4 / 2-2 + 30";
-
-        //when
-        String[] operator = sut.operatorExtractor(value);
-
-        //then
-        assertThat(operator).isEqualTo(new String[] {"+","*","/","-","+"});
-    }
-
-    @Test
-    void 연산자_추출을_한다3() {
-        //1.피연산자와 연산자가 섞인 문자열 중 피연산자만을 추출하여 반환한다.
-        //given
-        String value = "20*20-2+3+3+4-5/2";
-
-        //when
-        String[] operator = sut.operatorExtractor(value);
-
-        //then
-        assertThat(operator).isEqualTo(new String[] {"*","-","+","+","+","-","/"});
-    }
-
-    @Test
-    void 피연산자_추출을_한다() {
-        //given
-        String value = "2 + 3 * 4 / 2 - 2";
-
-        //when
-        String[] operands = sut.opertandExtractor(value);
-
-        //then
-        assertThat(operands).isEqualTo(new String[] {"2","3","4","2","2"});
-    }
-
-
-
-    @Test
-    void 인자값이_정규식_위반시_예외발생() {
-        //1.정규식 위반 시 예외 발생
-        //given
-        String value = "2+*3**20--2";
-
-        //then
-        assertThatThrownBy(
-                () -> sut.operatorExtractor(value)
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
-
-
-
 
 }
+
