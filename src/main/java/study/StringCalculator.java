@@ -1,33 +1,46 @@
 package study;
 
-import sun.security.krb5.internal.PAData;
-
-import java.util.Arrays;
-import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Queue;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
-/*2 + 3 * 4 / 2 = 10
- */
+import static java.util.stream.Collectors.toCollection;
+
 public class StringCalculator {
+    public double calculate(Expression expression) {
+        return calculate(operator(expression), operand(expression));
+    }
 
-    public double calculate(StringExtractor expression) {
-        Queue<Character> operator = expression.getOperator();
-        Queue<Double> operand = expression.getOperand();
-
+    @SuppressWarnings("ConstantConditions")
+    private double calculate(Queue<Character> operator, Queue<Double> operand) {
         double result = operand.poll();
-
-        while(operator.size() > 0) {
-            result = calculateResult(operator.poll(), operand.poll(), result);
+        while (!operator.isEmpty()) {
+            Operator operatorValue = Operator.findByOperator(operator.poll());
+            result = operatorValue.apply(result, operand.poll());
         }
         return result;
     }
 
-    private double calculateResult(char operator, double operand, double result) {
-        Operator from = Operator.from(operator);
-        return from.apply(result, operand);
+    private Queue<Character> operator(Expression expression) {
+        String[] operators = expression.get()
+                .replaceAll("\\d", "")
+                .split("");
+
+        if (operators.length == 0 || (operators.length == 1 && operators[0].isEmpty())) {
+            return new LinkedList<>();
+        }
+
+        return Stream.of(operators)
+                .map(s -> s.charAt(0))
+                .collect(toCollection(LinkedList::new));
     }
 
+    private Queue<Double> operand(Expression expression) {
+        return Stream.of(
+                        expression.get().split("\\D")
+                )
+                .map(Double::new)
+                .collect(toCollection(LinkedList::new));
+    }
 }
 
